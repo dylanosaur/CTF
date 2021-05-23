@@ -1,0 +1,20 @@
+Norzh CTF
+
+Discovery: Connect to the VPN network and open wireshark
+A device is pinging you, with the flag in the ASCII packet data
+ET:z@E¬@ý
+(æBAÝª`Ü=NORZH{l3t5_go_!}NORZH{l3t5_go_!}NORZH{l3
+
+That host appears to be 10.40.3.230
+That host is hosting a webpage
+
+Triskel 1: Go the website, on a linked page an API is referenced
+On the website http://10.40.3.230:8100
+url: 'api/call_api.php?api=10.0.42.100/api/',
+
+Browse to http://10.40.3.230:8100/api/call_api.php?api=10.0.42.100/api/
+You get the data from the endpoint. Turns out you get errors unless you keep 
+http://10.40.3.230:8100/api/call_api.php?api=10.0.42.xxx all the same up to the X's
+if you iterate over the 10.0.42.0/24 subnet with GETs, you find at 10.0.42.200 a chatroom
+with the second triskel flag
+NORZH{You_just_SSRFed_your_way_in!!!}
