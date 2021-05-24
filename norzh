@@ -174,3 +174,7 @@ sudo nmap -sS -A 10.0.42.100 -v
 -sO still nothing
 
 Apach 2.4.33 - PHP/7.2.7 xprint server
+
+you can iterate ove 10.0.42.xxx with request, one of them gives a chat page with the flag
+You can send requests to  'api/call_api.php?api=10.0.42.xxx/api/', and at 200 you find the chat application and NORZH{You_just_SSRFed_your_way_in!!!}
+
