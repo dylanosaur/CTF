@@ -6,6 +6,7 @@ web
 find
 	find / -exec cat {} \; grep flag
 	find / -type f -exec grep -H 'text-to-find-here' {} \;
+	grep -r 'Vishwa' .
 
 nmap (-sN null flag syn, -sO lower level networking port scan, -A aggressive, -sS standard)
 	sudo nmap -sn 192.168.1.0/24		(scan for hosts, first 24 bits set)
