@@ -1,0 +1,34 @@
+Firmware extraction
+- cheap tools available: 40$ BusPirate and 45$ Shikra
+- can be used to detect pirated firmware in cheap knockoffs
+- sometimes contain hardcoded secrets, like "root" on the device
+- microscope is extremely valuable for id-ing chips and creating contact leads
+
+first steps
+- what ports are on the device? is there a GUI
+- how hard is it to open the case
+- look at chips under microscope, google the chip numbers
+- the CPU type components dont have the firmware, we're looking for the flask/memory chips
+- - ex 8 pin SPI flask
+- - common protocols are I2C, JTAG, and SPI
+
+Understanding the protocols
+- basically we just need to identify the important signals for our connections
+- I2C: Inter Integrated Circuit: 2 pins
+- JTAG: up to 5 wires and has extra functionality like debugging. its a whole circuit built into the chip
+- SPI (serial programmable interface): 4 pins: SCLK, MOSI, MISO, SS
+- talk to the buspirate/shkira using Minicom from your computer - its just a serial connection
+
+Connecting to the device
+- lead clips (like multimenter/voltmeter probes) work for tons of chips, but not the tiny tiny ones. lots of disconnects. very touchy
+- you can power the device externally with your own power supply, or just power the device normally
+- use Flashrom to control the Shikra to extract the firmware over SPI. just dump the whole image as a binary
+- for JTAG use openOCD, it runs a local server on localhost:4444 and provides an interactive prompt
+- when creating custom leads for tiny formfactor chips, leads should be < 4" and all the same length
+- there are "sockets" you can buy to drop chips in directly, but you need a special socket for each chip formfactor
+- JTAGulator: custom device to help identify which signals go where on the device, and to identify the protocol itself
+
+Post exploitation
+- use your binary analysis tools like radare2, strings, ghidra, ida
+- binwalk supports these weird images and provides easy interface: binwalk -e spidump.bin
+- commonly the firmware will be labeled like "squashfs"
