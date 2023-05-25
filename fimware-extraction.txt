@@ -8,8 +8,8 @@ first steps
 - what ports are on the device? is there a GUI
 - how hard is it to open the case
 - look at chips under microscope, google the chip numbers
-- the CPU type components dont have the firmware, we're looking for the flask/memory chips
-- - ex 8 pin SPI flask
+- the CPU type components dont have the firmware, we're looking for the flash/memory chips
+- - ex 8 pin SPI flash
 - - common protocols are I2C, JTAG, and SPI
 
 Understanding the protocols
