@@ -1,0 +1,14 @@
+r2 notes
+
+simple run script on startup:
+
+program: hello
+cli input: fffff
+
+
+r2 -i exploit.r2 -d hello ffffff
+
+where exploit.r2 contains startup instructions:
+aaa
+afl
+dcu main
