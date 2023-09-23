@@ -82,3 +82,5 @@ wordpress
 r2
 	dmhc @0x1202b848e5894455
 	heap analysis - https://hackliza.gal/en/posts/r2heap/
+	print stack: pxr @ esp 
+	run with startup: r2 -i startup.r2 -d file
